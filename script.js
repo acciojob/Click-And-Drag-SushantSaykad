@@ -1,48 +1,30 @@
-// Your code here.
-const container = document.querySelector(".container");
-const cubes = document.querySelectorAll(".cube");
+// script.js
 
-let activeCube = null;
-let offsetX = 0;
-let offsetY = 0;
+const items = document.querySelector(".items");
 
-cubes.forEach((cube) => {
-    cube.addEventListener("mousedown", (e) => {
-        activeCube = cube;
+let isDragging = false;
+let startX = 0;
+let scrollLeft = 0;
 
-        const cubeRect = cube.getBoundingClientRect();
-
-        offsetX = e.clientX - cubeRect.left;
-        offsetY = e.clientY - cubeRect.top;
-
-        cube.style.position = "absolute";
-        cube.style.zIndex = "1000";
-    });
+items.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    startX = e.pageX;
+    scrollLeft = items.scrollLeft;
 });
 
 document.addEventListener("mousemove", (e) => {
-    if (!activeCube) return;
+    if (!isDragging) return;
 
-    const containerRect = container.getBoundingClientRect();
+    e.preventDefault();
 
-    let left = e.clientX - containerRect.left - offsetX;
-    let top = e.clientY - containerRect.top - offsetY;
-
-    // Keep cube inside container
-    left = Math.max(
-        0,
-        Math.min(left, containerRect.width - activeCube.offsetWidth)
-    );
-
-    top = Math.max(
-        0,
-        Math.min(top, containerRect.height - activeCube.offsetHeight)
-    );
-
-    activeCube.style.left = left + "px";
-    activeCube.style.top = top + "px";
+    const walk = e.pageX - startX;
+    items.scrollLeft = scrollLeft - walk;
 });
 
 document.addEventListener("mouseup", () => {
-    activeCube = null;
+    isDragging = false;
+});
+
+document.addEventListener("mouseleave", () => {
+    isDragging = false;
 });
